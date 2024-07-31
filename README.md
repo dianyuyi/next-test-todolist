@@ -33,10 +33,34 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Folder
+- src
+  - api/
+  - app
+    - layout.tsx
+    - page.tsx
+  - components
+    - layout/
+    - todo/
+  - constants
+  - lib
+    - features/
+    - hooks.ts
+    - registry.tsx 
+    - store.ts
+  - styles
+
+
 
 ## Functions
 
+Mock API source: [JSON Placeholder](https://jsonplaceholder.typicode.com/).
+**When request sent, resource from server will not be really updated.**
+
 - Read: The list auto loaded in first
 - Create: Add todo by input text
-- Update: Click the 'check' icon, switch the todo' s completed status
+- Update: 
+  - Click the 'check' icon, switch the todo' s completed status
+  - Click the title of todo, change the content
+
 - Delete: Click the 'trash' icon, delete the todo you chose

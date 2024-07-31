@@ -9,7 +9,7 @@ import { RootState } from '@/lib/store';
 
 import Container, { PageTitle } from '@/components/layout/Container';
 import Loading from '@/components/Loading';
-import Item from '@/components/todo/Item';
+import Item, { EventEl } from '@/components/todo/Item';
 import List from '@/components/todo/List';
 import Input from '@/components/todo/Input';
 
@@ -18,7 +18,6 @@ import {
   fetchUpdateTodo,
   fetchDeleteTodo,
   TodoState,
-  ErrorType,
 } from '@/lib/features/todos/todoSlice';
 
 export default function Home() {
@@ -26,7 +25,7 @@ export default function Home() {
     response: todoList,
     isLoading,
     errors,
-    message
+    message,
   } = useSelector((state: RootState) => state.todos);
   const dispatch = useAppDispatch();
   const [todo, setTodo] = useState<string>('');
@@ -39,11 +38,9 @@ export default function Home() {
     if (isLoading === false && typeof errors === 'string') {
       toast.error(errors);
     }
-  
-  }, [isLoading, message, errors])
-  
+  }, [isLoading, message, errors]);
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onChange = (e: EventEl) => {
     setTodo(e.target.value);
   };
 
