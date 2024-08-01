@@ -7,29 +7,31 @@ import { Virtuoso, VirtuosoHandle } from 'react-virtuoso';
 import { useAppDispatch } from '@/lib/hooks';
 import { RootState } from '@/lib/store';
 
-import Container, { PageTitle } from '@/components/layout/Container';
+import Container, { PageTitle, Subtitle } from '@/components/layout/Container';
 import Loading from '@/components/Loading';
 import Item, { EventEl } from '@/components/todo/Item';
 import List from '@/components/todo/List';
 import Input from '@/components/todo/Input';
+import { AddIcon, SearchIcon } from '@/components/Icons';
 
 import {
   fetchCreateTodo,
   fetchUpdateTodo,
   fetchDeleteTodo,
   TodoState,
+  selectTodoByKeyword,
 } from '@/lib/features/todos/todoSlice';
 
 export default function Home() {
-  const {
-    response: todoList,
-    isLoading,
-    errors,
-    message,
-  } = useSelector((state: RootState) => state.todos);
+  const { response: list, isLoading, errors, message } = useSelector(
+    (state: RootState) => state.todos
+  );
   const dispatch = useAppDispatch();
   const [todo, setTodo] = useState<string>('');
+  const [search, setSearch] = useState<string>('');
+  const [keyword, setKeyword] = useState<string>('');
   const virtuoso = useRef<VirtuosoHandle>(null);
+  const renderList = useSelector((state) => selectTodoByKeyword(state, keyword));
 
   useEffect(() => {
     if (isLoading === false && message) {
@@ -40,14 +42,21 @@ export default function Home() {
     }
   }, [isLoading, message, errors]);
 
-  const onChange = (e: EventEl) => {
+  const handleNewTodo = (e: EventEl) => {
     setTodo(e.target.value);
+  };
+
+  const handleSearchContent = (e: EventEl) => {
+    setSearch(e.target.value);
+  };
+  const searchAction = () => {
+    setKeyword(search);
   };
 
   const handleScroll = () => {
     if (virtuoso.current) {
       virtuoso.current.scrollToIndex({
-        index: todoList.length,
+        index: list.length,
         align: 'end',
         behavior: 'smooth',
       });
@@ -63,6 +72,7 @@ export default function Home() {
         title: todo,
         completed: false,
       };
+      setKeyword('');
       await dispatch(fetchCreateTodo(data)).unwrap();
       handleScroll();
       return;
@@ -81,23 +91,41 @@ export default function Home() {
       <Loading loading={isLoading} />
       <Toaster position="bottom-right" />
       <PageTitle>Todo List</PageTitle>
-      <Input value={todo} onChange={onChange} addAction={addAction} />
+      <Input
+        value={search}
+        placeholder="Fill & click to search"
+        buttonIcon={<SearchIcon />}
+        changeAction={handleSearchContent}
+        clickAction={searchAction}
+      />
+      <Input
+        value={todo}
+        placeholder="Fill you todo task"
+        changeAction={handleNewTodo}
+        clickAction={addAction}
+        buttonIcon={<AddIcon />}
+        buttonText="Add"
+      />
       <List>
-        <Virtuoso
-          ref={virtuoso}
-          style={{ height: 400 }}
-          data={todoList}
-          totalCount={todoList.length}
-          itemContent={(_, item) => {
-            return (
-              <Item
-                data={item}
-                updateAction={updateAction}
-                deleteAction={deleteAction}
-              />
-            );
-          }}
-        />
+        {renderList.length ? (
+          <Virtuoso
+            ref={virtuoso}
+            style={{ height: 400 }}
+            data={renderList}
+            totalCount={renderList.length}
+            itemContent={(_, item) => {
+              return (
+                <Item
+                  data={item}
+                  updateAction={updateAction}
+                  deleteAction={deleteAction}
+                />
+              );
+            }}
+          />
+        ) : (
+          <Subtitle>No Result</Subtitle>
+        )}
       </List>
     </Container>
   );

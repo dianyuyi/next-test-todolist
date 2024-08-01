@@ -19,23 +19,39 @@ export const TextInput = styled.input(() => [
 ]);
 
 export const Button = styled.button<InputProps>(() => [
-  tw`flex gap-2 bg-gray-700 text-white outline-none px-6 py-2`,
+  tw`flex items-center gap-2 bg-gray-700 text-white outline-none px-4 py-2`,
+]);
+
+export const IconWrap = styled.div<InputProps>(() => [
+  tw`*:text-white *:text-xl`,
 ]);
 
 export const Input = ({
   value,
-  addAction,
-  onChange,
+  placeholder = '',
+  buttonIcon = null,
+  buttonText = '',
+  clickAction,
+  changeAction,
 }: {
   value: string;
-  addAction: () => void;
-  onChange: (arg0: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string;
+  buttonIcon?: null | React.JSX.Element;
+  buttonText?: string;
+  clickAction: () => void ;
+  changeAction: (arg0: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
   return (
     <Wrapper>
-      <TextInput type="text" value={value} onChange={onChange} placeholder="Fill you todo task"/>
-      <Button type="button" onClick={addAction}>
-        <AddIcon tw="text-white text-xl"/>
+      <TextInput
+        type="text"
+        value={value}
+        onChange={changeAction}
+        placeholder={placeholder}
+      />
+      <Button type="button" onClick={clickAction}>
+        {buttonText}
+        <IconWrap>{buttonIcon}</IconWrap>
       </Button>
     </Wrapper>
   );

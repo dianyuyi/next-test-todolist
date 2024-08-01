@@ -1,10 +1,15 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import {
+  createSlice,
+  createAsyncThunk,
+  createSelector,
+} from '@reduxjs/toolkit';
 import {
   getTodoAPI,
   createTodoAPI,
   updateTodoAPI,
   deleteTodoAPI,
 } from '@/api/todos';
+import { RootState } from '@/lib/store';
 
 export interface TodoState {
   userId: number;
@@ -167,5 +172,13 @@ const todoReducer = createSlice({
       });
   },
 });
+
+export const selectTodoByKeyword = createSelector(
+  [(state: RootState) => state.todos.response, (_, keyword: string) => keyword],
+  (todos, keyword) => {
+    return todos.filter((item) => item.title.includes(keyword));
+  }
+);
+
 export const { clearAllTodo } = todoReducer.actions;
 export default todoReducer.reducer;

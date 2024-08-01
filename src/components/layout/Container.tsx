@@ -25,5 +25,10 @@ export const PageTitle = (props: { children: ReactNode }) => (
   </div>
 );
 
+export const Subtitle = (props: { children: ReactNode }) => (
+  <div css={styles.title}>
+    <p tw="text-xl text-center text-gray-500">{props.children}</p>
+  </div>
+);
 
 export default Container;
